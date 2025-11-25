@@ -8,6 +8,10 @@ const todoForm = document.querySelector('form');
 const todoInput = document.getElementById('todo-input');
 const todoListUL = document.getElementById('todo-list');
 
+const todoSortBtn = document.getElementById('todo-sort-btn');
+const completeSortBtn = document.getElementById('complete-sort-btn');
+const showAllBtn = document.getElementById('show-all-btn');
+
 let allTodos = getTodos();
 updateTodoList();
 // see all tasks todo in console
@@ -18,6 +22,13 @@ todoForm.addEventListener('submit', function(e){
     addTask();
 })
 
+todoSortBtn.addEventListener("click", () => updateTodoList("todo"));
+completeSortBtn.addEventListener("click", () => updateTodoList("completed"));
+showAllBtn.addEventListener("click", () => updateTodoList("all"));
+
+console.log(todoSortBtn, completeSortBtn, showAllBtn);
+
+
 function addTask(){
      const todoText = todoInput.value.trim();
      if(todoText.length > 0){
@@ -26,17 +37,23 @@ function addTask(){
             completed: false
         }
         allTodos.push(todoObj);
-        updateTodoList();
+        updateTodoList("all");
         saveTodos();
         todoInput.value = "";
      }
 }
 
-function updateTodoList(){
+function updateTodoList(filter = "all"){
     todoListUL.innerHTML = "";
     allTodos.forEach((todo, todoIndex)=>{
-        todoItem = createTodoItem(todo, todoIndex);
-        todoListUL.append(todoItem);
+        if (filter === "all" ||                           // -- all tasks listed
+            (filter === "todo" && !todo.completed) ||     //tasks not completed
+            (filter === "completed" && todo.completed)) { //tasks completed
+            const todoItem = createTodoItem(todo, todoIndex);
+            todoListUL.append(todoItem);
+        }
+        // todoItem = createTodoItem(todo, todoIndex);
+        // todoListUL.append(todoItem);
     })
 }
 
@@ -47,7 +64,7 @@ function createTodoItem(todo, todoIndex){
     todoLI.className = "todo";
     todoLI.innerHTML = `
                 <input type = "checkbox" id = "${todoId}">
-                <label class = "custom-checkbox" for="$(todoId)">
+                <label class = "custom-checkbox" for="${todoId}">
                     <svg fill="transparent" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
                         <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/>
                     </svg>
@@ -90,5 +107,5 @@ function getTodos(){
 function deleteTodoItem(todoIndex){
     allTodos = allTodos.filter((_, i)=> i !== todoIndex);
     saveTodos();
-    updateTodoList();
+    updateTodoList("all");
 }
