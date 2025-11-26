@@ -8,9 +8,12 @@ const todoForm = document.querySelector('form');
 const todoInput = document.getElementById('todo-input');
 const todoListUL = document.getElementById('todo-list');
 
+// buttons
 const todoSortBtn = document.getElementById('todo-sort-btn');
 const completeSortBtn = document.getElementById('complete-sort-btn');
 const showAllBtn = document.getElementById('show-all-btn');
+const clearAllBtn = document.getElementById('clear-all-btn');
+
 
 let allTodos = getTodos();
 updateTodoList();
@@ -25,6 +28,8 @@ todoForm.addEventListener('submit', function(e){
 todoSortBtn.addEventListener("click", () => updateTodoList("todo"));
 completeSortBtn.addEventListener("click", () => updateTodoList("completed"));
 showAllBtn.addEventListener("click", () => updateTodoList("all"));
+clearAllBtn.addEventListener("click", () => clearAllTasks());
+
 
 console.log(todoSortBtn, completeSortBtn, showAllBtn);
 
@@ -77,17 +82,60 @@ function createTodoItem(todo, todoIndex){
                         <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/>
                     </svg>
                 </button>
+                <button class = "multi-option-button"> 
+                    <svg fill="(--secondary-color)"xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"> 
+                        <path d="M480-160q-33 0-56.5-23.5T400-240q0-33 23.5-56.5T480-320q33 0 56.5 23.5T560-240q0 33-23.5 56.5T480-160Zm0-240q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm0-240q-33 0-56.5-23.5T400-720q0-33 23.5-56.5T480-800q33 0 56.5 23.5T560-720q0 33-23.5 56.5T480-640Z"/> 
+                    </svg> 
+                </button>
+                <div class="todo-options hidden">
+                    <button class="edit-todo">Edit</button>
+                    <button class="pin-todo">Pin</button>
+                </div>
                 `
+
+    // delete task
     const deleteButton = todoLI.querySelector(".delete-button");
     deleteButton.addEventListener("click", ()=>{
         deleteTodoItem(todoIndex);
     })
 
+    // entering and saving input
     const checkbox = todoLI.querySelector("input");
     checkbox.addEventListener("change", ()=>{
         allTodos[todoIndex].completed = checkbox.checked;
         saveTodos();
     });
+
+    // multi option btn + option buttons
+    const multiOptionBtn = todoLI.querySelector(".multi-option-button");
+    const optionMenu    = todoLI.querySelector(".todo-options");
+    const editBtn       = todoLI.querySelector(".edit-todo");
+    const pinBtn        = todoLI.querySelector(".pin-todo");
+    // open/close menu
+    multiOptionBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        optionMenu.classList.toggle("hidden");
+    });
+    // edit functionality
+    editBtn.addEventListener("click", () => {
+        const newText = prompt("Edit task:", todo.text);
+        if (newText !== null && newText.trim() !== "") {
+            allTodos[todoIndex].text = newText.trim();
+            saveTodos();
+            updateTodoList("all");
+        }
+    });
+    // pin functionality
+    pinBtn.addEventListener("click", () => {
+        const item = allTodos[todoIndex];
+        allTodos.splice(todoIndex, 1);     // remove from current position
+        allTodos.unshift(item);            // move to top
+        saveTodos();
+        updateTodoList("all");
+    });
+
+    // close menu when clicking outside
+    document.addEventListener("click", () => optionMenu.classList.add("hidden"));
 
     checkbox.checked = todo.completed;
     
@@ -109,3 +157,16 @@ function deleteTodoItem(todoIndex){
     saveTodos();
     updateTodoList("all");
 }
+
+function clearAllTasks(){
+    const result = confirm("Do you want to proceed? The following will clear all tasks");
+    if(result){
+        allTodos = [];
+        localStorage.clear();
+        alert("Local storage cleared");
+        updateTodoList("all");
+    } else {
+        alert("Clear all cancelled");
+    }
+}
+

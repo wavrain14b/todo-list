@@ -126,6 +126,23 @@ form{
     fill:red;
 }
 
+
+.multi-option-button{
+    padding: 3px;
+    background: none;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+}
+
+.multi-option-button:hover svg{
+    fill: rgb(0, 140, 255); 
+}
+
+.multi-option-button svg{
+    transition: 200ms ease;
+}
+
 .custom-checkbox{
     border: 2px solid var(--accent-color);
     border-radius: 50%;
@@ -159,7 +176,6 @@ input[type="checkbox"]{
     display: none;
 }
 
-
 /* sorting buttons */
 
 .sorts-buttons {
@@ -186,6 +202,35 @@ input[type="checkbox"]{
     background-color: rgb(0, 200, 255);
     color: black;
 }
+
+/* popup styling */
+.todo-options {
+    position: relative;
+    right: -30px;
+    /* top: 35px; */
+    background: #222;
+    border: 1px solid #444;
+    padding: 5px;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    z-index: 99;
+}
+
+.todo-options.hidden {
+    display: none;
+}
+
+.todo-options button {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 4px;
+    text-align: left;
+}
+
 
 /* moving add below input for iphone */
 /* only applied to devices below 500px (iphones) */
